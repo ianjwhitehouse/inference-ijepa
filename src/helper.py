@@ -20,6 +20,27 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logger = logging.getLogger()
 
 
+def load_target_encoding_checkpoint(
+    device,
+    r_path,
+    target_encoder,
+):
+    checkpoint = torch.load(r_path, map_location=torch.device('cpu'))
+    epoch = checkpoint['epoch']
+
+    try:
+        pretrained_dict = checkpoint['target_encoder']
+        msg = target_encoder.load_state_dict(pretrained_dict, strict=True)
+        logger.info(f'loaded pretrained encoder from epoch {epoch} with msg: {msg}')
+    except RuntimeError:
+        pretrained_dict = checkpoint['target_encoder']
+        pretrained_dict = {".".join(k.split(".")[1:]):v for k, v in pretrained_dict.items()}
+        msg = target_encoder.load_state_dict(pretrained_dict, strict=True)
+        logger.info(f'loaded pretrained encoder from epoch {epoch} with msg: {msg} (FALLBACK)')
+
+    return target_encoder
+
+
 def load_checkpoint(
     device,
     r_path,
@@ -63,6 +84,21 @@ def load_checkpoint(
         epoch = 0
 
     return encoder, predictor, target_encoder, opt, scaler, epoch
+
+
+def init_encoder(
+    device,
+    patch_size=16,
+    model_name='vit_base',
+    crop_size=224,
+):
+    logger.info("Using model %s" % model_name)
+    encoder = vit.__dict__[model_name](
+        img_size=[crop_size],
+        patch_size=patch_size
+    )
+
+    return encoder
 
 
 def init_model(

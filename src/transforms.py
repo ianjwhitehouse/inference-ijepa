@@ -16,6 +16,21 @@ _GLOBAL_SEED = 0
 logger = getLogger()
 
 
+def make_inference_transforms(
+    crop_size=224,
+    crop_scale=(1.0, 1.0),
+    normalization=((0.485, 0.456, 0.406),
+                   (0.229, 0.224, 0.225))
+):
+    logger.info('making data transforms')
+    
+    transform_list = []
+    transform_list += [transforms.Resize((crop_size, crop_size))]
+    transform_list += [transforms.ToTensor()]
+    transform_list += [transforms.Normalize(normalization[0], normalization[1])]
+    
+    return transforms.Compose(transform_list)
+
 def make_transforms(
     crop_size=224,
     crop_scale=(0.3, 1.0),
