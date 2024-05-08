@@ -1,5 +1,16 @@
 # I-JEPA
 
+## Update: You can use this fork to get image embedding from I-JEPA!
+Simply download it and run main-inference.py
+
+```
+python main-inference.py \
+  --fname configs/in1k_vith14_ep300.yaml \
+  --devices cuda:0 cuda:1 cuda:2
+```
+
+The configuration file should be exactly the same as the original model.  The images in the `root_path/image_folder` folder, which is set on likes 8 and 11 of the config file, will be inferenced.
+
 Official PyTorch codebase for I-JEPA (the **Image-based Joint-Embedding Predictive Architecture**) published @ CVPR-23.
 [\[arXiv\]](https://arxiv.org/pdf/2301.08243.pdf) [\[JEPAs\]](https://ai.facebook.com/blog/yann-lecun-advances-in-ai-research/) [\[blogpost\]](https://ai.facebook.com/blog/yann-lecun-ai-model-i-jepa/)
 
